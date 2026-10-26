@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.TypedValue;
@@ -13,6 +14,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
@@ -95,6 +97,28 @@ public class MainActivity extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         setContentView(root);
+
+        /* Android 15+ (targetSdk 35) draws edge-to-edge by default — without this the status bar
+           overlaps the page header and the banner ad gets clipped by the navigation bar. */
+        root.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                int top, bottom, left, right;
+                if (Build.VERSION.SDK_INT >= 30) {
+                    android.graphics.Insets bars = insets.getInsets(
+                            WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+                    top = bars.top; bottom = bars.bottom; left = bars.left; right = bars.right;
+                } else {
+                    top = insets.getSystemWindowInsetTop();
+                    bottom = insets.getSystemWindowInsetBottom();
+                    left = insets.getSystemWindowInsetLeft();
+                    right = insets.getSystemWindowInsetRight();
+                }
+                v.setPadding(left, top, right, bottom);
+                return insets;
+            }
+        });
+        root.requestApplyInsets();
 
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
