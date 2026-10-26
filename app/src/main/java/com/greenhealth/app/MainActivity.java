@@ -22,11 +22,16 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.startapp.sdk.ads.banner.Banner;
+import com.startapp.sdk.ads.banner.BannerListener;
+import com.startapp.sdk.adsbase.StartAppSDK;
 
 /**
  * Green Health — native shell around https://6a63225cbe43e3de080235a1--paudhapandit.netlify.app/
@@ -42,6 +47,9 @@ public class MainActivity extends Activity {
 
     private static final String START_URL = "https://6a63225cbe43e3de080235a1--paudhapandit.netlify.app/";
 
+    /** Start.io App ID (dashboard: Opjb) */
+    private static final String STARTAPP_APP_ID = "209268815";
+
     private WebView web;
     private ProgressBar bar;
     private View errorView;
@@ -53,9 +61,26 @@ public class MainActivity extends Activity {
         FrameLayout root = new FrameLayout(this);
         root.setBackgroundColor(Color.parseColor("#07090f"));
 
-        web = new WebView(this);
-        root.addView(web, new FrameLayout.LayoutParams(
+        /* Start.io init must happen before any ad view is created */
+        StartAppSDK.init(this, STARTAPP_APP_ID, true);
+
+        LinearLayout column = new LinearLayout(this);
+        column.setOrientation(LinearLayout.VERTICAL);
+        root.addView(column, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        web = new WebView(this);
+        column.addView(web, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+
+        Banner banner = new Banner(this, new BannerListener() {
+            @Override public void onReceiveAd(View view) { }
+            @Override public void onFailedToReceiveAd(View view) { }
+            @Override public void onImpression(View view) { }
+            @Override public void onClick(View view) { }
+        });
+        column.addView(banner, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         bar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         bar.setMax(100);

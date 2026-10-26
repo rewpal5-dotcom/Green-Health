@@ -15,7 +15,8 @@ Site: https://6a63225cbe43e3de080235a1--paudhapandit.netlify.app/
 - **External links** — mailto, tel, WhatsApp, UPI ya doosri site ke link phone ke browser/app mein khulte hain
 - **Downloads** — site se koi file download ho to Android DownloadManager se Downloads folder mein
 - Cookies aur localStorage on — site ka data save rehta hai
-- Koi ads nahi, koi third-party library nahi, sirf `INTERNET` permission
+- **Start.io ads** — neeche banner ad (App ID `209268815`), SDK 5.4.0
+- Launcher par chhota naam: **GreenHealth** (pehle "Green Health" lamba dikh raha tha)
 
 ## Build
 
@@ -39,3 +40,10 @@ Java · minSdk 24 · targetSdk 35 · AGP 8.7.3 · Gradle 8.9
 ## License
 
 MIT
+
+## Ads (Start.io)
+
+- App ID: `209268815`
+- Banner: screen ke neeche, WebView ke thik niche
+- `app-ads.txt` repo root mein hai — ad network verification ke liye
+- Ads hataane ke liye `MainActivity.java` se `StartAppSDK.init(...)` aur `Banner` block hata dein, aur `app/build.gradle.kts` se dependency nikaal dein
